@@ -1,7 +1,7 @@
 promise-worker [![Build Status](https://travis-ci.org/nolanlawson/promise-worker.svg?branch=master)](https://travis-ci.org/nolanlawson/promise-worker) [![Coverage Status](https://coveralls.io/repos/github/nolanlawson/promise-worker/badge.svg?branch=master)](https://coveralls.io/github/nolanlawson/promise-worker?branch=master)
 ====
 
-A small and performant library for communicating with Web Workers or Service Workers, using Promises. Post a message to the worker, get a message back.
+Modified version of [promise-worker](https://github.com/nolanlawson/promise-worker) library that supports object transferring. Possibly works slower than original for not transferable messages.
 
 **Goals:**
 
