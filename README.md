@@ -1,4 +1,4 @@
-promise-worker [![Build Status](https://travis-ci.org/nolanlawson/promise-worker.svg?branch=master)](https://travis-ci.org/nolanlawson/promise-worker) [![Coverage Status](https://coveralls.io/repos/github/nolanlawson/promise-worker/badge.svg?branch=master)](https://coveralls.io/github/nolanlawson/promise-worker?branch=master)
+promise-worker-transferable [![Build Status](https://travis-ci.org/terikon/promise-worker-transferable.svg?branch=master)](https://travis-ci.org/terikon/promise-worker-transferable)
 ====
 
 Modified version of [promise-worker](https://github.com/nolanlawson/promise-worker) library that supports object transferring. Possibly works slower than original for not transferable messages.
