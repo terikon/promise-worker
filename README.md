@@ -39,7 +39,7 @@ promiseWorker.postMessage('ping').then(function (response) {
 });
 
 // With transferList
-promiseWorker.postMessage(pingImageData, [pingImageData]) // pongImageData transferred from main to worker
+promiseWorker.postMessage(pingImageData, [pingImageData.data.buffer]) // pongImageData transferred from main to worker
 .then(function (response) {
   // handle response
 }).catch(function (error) {
@@ -59,7 +59,7 @@ registerPromiseWorker(function (message) {
 
 // With transferList
 registerPromiseWorker(function (message, withTransferList) {
-  return withTransferList(pongImageData, [pongImageData]); // pongImageData transferred from worker to main 
+  return withTransferList(pongImageData, [pongImageData.data.buffer]); // pongImageData transferred from worker to main 
 });
 ```
 
@@ -113,7 +113,7 @@ Promise can return withTransferList as well:
 // worker.js
 registerPromiseWorker(function (_, withTransferList) {
   return Promise.resolve().then(function () {
-    return withTransferList(pongImageData, [pongImageData]); // pongImageData transferred to webworker
+    return withTransferList(pongImageData, [pongImageData.data.buffer]); // pongImageData transferred to webworker
   });
 });
 ```
