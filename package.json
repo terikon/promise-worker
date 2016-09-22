@@ -1,6 +1,6 @@
 {
   "name": "promise-worker-transerable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Communicate with a Web Worker using Promises, allowing transferList",
   "main": "index.js",
   "scripts": {

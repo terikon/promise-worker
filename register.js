@@ -81,7 +81,7 @@ function registerPromiseWorker(callback) {
   function MessageWithTransferList(message, transferList) {
     this.message = message;
     this.transferList = transferList;
-  };
+  }
 
   self.addEventListener('message', onIncomingMessage);
 }
