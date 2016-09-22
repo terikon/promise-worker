@@ -55,7 +55,8 @@
     "stream-to-promise": "^1.1.0",
     "uglify-js": "^2.7.0",
     "zuul": "^3.10.1",
-    "zuul-localtunnel": "nolanlawson/zuul-localtunnel#https"
+    "zuul-localtunnel": "nolanlawson/zuul-localtunnel#https",
+    "text-encoding": "^0.6.1"
   },
   "dependencies": {
     "is-promise": "^2.1.0",

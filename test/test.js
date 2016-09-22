@@ -1,5 +1,8 @@
 'use strict';
 
+var encoder = new (require('text-encoding').TextEncoder)('utf-8');
+var decoder = new (require('text-encoding').TextDecoder)('utf-8');
+
 if (!process.browser) {
   global.Worker = require('pseudo-worker');
   global.XMLHttpRequest = require('./xhr-shim');
@@ -30,6 +33,17 @@ describe('main test suite', function () {
 
     return promiseWorker.postMessage('ping').then(function (res) {
       assert.equal(res, 'ping');
+    });
+  });
+
+  it('echoes a message, with transferList', function () {
+    var worker = new Worker(path + 'worker-echo-transferlist.js');
+    var promiseWorker = new PromiseWorker(worker);
+
+    var array = encoder.encode('ping');
+
+    return promiseWorker.postMessage(array, [array]).then(function (res) {
+      assert.equal(decoder.decode(res), 'ping');
     });
   });
 
