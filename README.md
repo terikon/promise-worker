@@ -7,7 +7,7 @@ A small and performant library for communicating with Web Workers or Service Wor
 
  * Tiny footprint (~2.5kB min+gz)
  * Assumes you have a separate `worker.js` file (easier to debug, better browser support)
- * `JSON.stringify`s messages [for performance](http://nolanlawson.com/2016/02/29/high-performance-web-worker-messages/)
+ * Removed from promise-worker and no longer true: `JSON.stringify`s messages [for performance](http://nolanlawson.com/2016/02/29/high-performance-web-worker-messages/)
 
 **Live examples:**
 
@@ -19,7 +19,7 @@ Usage
 
 Install:
 
-    npm install promise-worker
+    npm install promise-worker-transferable
 
 Inside your main bundle:
 
@@ -34,6 +34,13 @@ promiseWorker.postMessage('ping').then(function (response) {
 }).catch(function (error) {
   // handle error
 });
+
+// With transferList
+promiseWorker.postMessage(pingImageData, [pingImageData.data]).then(function (response) {
+  // handle response
+}).catch(function (error) {
+  // handle error
+});
 ```
 
 Inside your `worker.js` bundle:
@@ -44,6 +51,11 @@ var registerPromiseWorker = require('promise-worker/register');
 
 registerPromiseWorker(function (message) {
   return 'pong';
+});
+
+// With transferList
+registerPromiseWorker(function (message, withTransferList) {
+  return withTransferList(pongImageData, [pongImageData.data]);
 });
 ```
 
@@ -82,9 +94,6 @@ registerPromiseWorker(function (message) {
 });
 ```
 
-Note that the message will be `JSON.stringify`d, so you
-can't send functions, `Date`s, custom classes, etc.
-
 ### Promises
 
 Inside of the worker, the registered handler can return either a Promise or a normal value:
@@ -105,8 +114,6 @@ promiseWorker.postMessage(null).then(function (message) {
 });
 ```
 
-Ultimately, the value that is sent from the worker to the main thread is also
-`stringify`d, so the same format rules apply.
 
 ### Error handling
 

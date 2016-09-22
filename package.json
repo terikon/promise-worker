@@ -1,5 +1,5 @@
 {
-  "name": "promise-worker",
+  "name": "promise-worker-transerable",
   "version": "1.1.1",
   "description": "Communicate with a Web Worker using Promises",
   "main": "index.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nolanlawson/promise-worker.git"
+    "url": "git+https://github.com/terikon/promise-worker-transferable.git"
   },
   "keywords": [
     "web worker",
@@ -29,12 +29,12 @@
     "webworker",
     "worker"
   ],
-  "author": "Nolan Lawson <nolan@nolanlawson.com>",
+  "author": "Roman Viskin <npm@terikon.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/nolanlawson/promise-worker/issues"
+    "url": "https://github.com/terikon/promise-worker-transferable/issues"
   },
-  "homepage": "https://github.com/nolanlawson/promise-worker#readme",
+  "homepage": "https://github.com/terikon/promise-worker-transferable#readme",
   "devDependencies": {
     "assert": "^1.3.0",
     "browserify": "^13.0.1",

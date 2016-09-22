@@ -2,23 +2,15 @@
 
 var isPromise = require('is-promise');
 
-function parseJsonSafely(str) {
-  try {
-    return JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-}
-
 function registerPromiseWorker(callback) {
 
   function postOutgoingMessage(e, messageId, error, result) {
-    function postMessage(msg) {
+    function postMessage(msg, transferList) {
       /* istanbul ignore if */
       if (typeof self.postMessage !== 'function') { // service worker
-        e.ports[0].postMessage(msg);
+        e.ports[0].postMessage(msg, transferList);
       } else { // web worker
-        self.postMessage(msg);
+        self.postMessage(msg, transferList);
       }
     }
     if (error) {
@@ -29,11 +21,11 @@ function registerPromiseWorker(callback) {
         // to silence it.
         console.error('Worker caught an error:', error);
       }
-      postMessage(JSON.stringify([messageId, {
+      postMessage([messageId, {
         message: error.message
-      }]));
+      }]);
     } else {
-      postMessage(JSON.stringify([messageId, null, result]));
+      postMessage([messageId, null, result]);
     }
   }
 
@@ -63,9 +55,8 @@ function registerPromiseWorker(callback) {
   }
 
   function onIncomingMessage(e) {
-    var payload = parseJsonSafely(e.data);
+    var payload = e.data;
     if (!payload) {
-      // message isn't stringified json; ignore
       return;
     }
     var messageId = payload[0];
