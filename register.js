@@ -25,17 +25,25 @@ function registerPromiseWorker(callback) {
         message: error.message
       }]);
     } else {
-      postMessage([messageId, null, result]);
+      if (result instanceof MessageWithTransferList) {
+        postMessage([messageId, null, result.message], result.transferList);
+      } else {
+        postMessage([messageId, null, result]);
+      }
     }
   }
 
   function tryCatchFunc(callback, message) {
     try {
-      return {res: callback(message)};
+      return {res: callback(message, withTransferList)};
     } catch (e) {
       return {err: e};
     }
   }
+
+  function withTransferList(resMessage, transferList) {
+    return new MessageWithTransferList(resMessage, transferList);
+  } 
 
   function handleIncomingMessage(e, callback, messageId, message) {
 
@@ -44,7 +52,7 @@ function registerPromiseWorker(callback) {
     if (result.err) {
       postOutgoingMessage(e, messageId, result.err);
     } else if (!isPromise(result.res)) {
-      postOutgoingMessage(e, messageId, null, result.res);
+        postOutgoingMessage(e, messageId, null, result.res);
     } else {
       result.res.then(function (finalResult) {
         postOutgoingMessage(e, messageId, null, finalResult);
@@ -69,6 +77,11 @@ function registerPromiseWorker(callback) {
       handleIncomingMessage(e, callback, messageId, message);
     }
   }
+
+  function MessageWithTransferList(message, transferList) {
+    this.message = message;
+    this.transferList = transferList;
+  };
 
   self.addEventListener('message', onIncomingMessage);
 }
