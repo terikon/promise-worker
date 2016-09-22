@@ -3,11 +3,14 @@ promise-worker-transferable [![Build Status](https://travis-ci.org/terikon/promi
 
 Modified version of [promise-worker](https://github.com/nolanlawson/promise-worker) library that supports object transferring. Possibly works slower than original for not transferable messages.
 
+As mentioned [here](https://github.com/nolanlawson/promise-worker/issues/13), promise-worker library will not get support for blobs and transferables. So here promise-worker-transferable goes.
+
 **Goals:**
 
  * Tiny footprint (~2.5kB min+gz)
  * Assumes you have a separate `worker.js` file (easier to debug, better browser support)
  * Removed from promise-worker and no longer true: `JSON.stringify`s messages [for performance](http://nolanlawson.com/2016/02/29/high-performance-web-worker-messages/)
+ * Instead, it's now possbile to transfer blobs, as well as attach transferList array to transfer objects, which works much faster for larger objects. 
 
 **Live examples:**
 
@@ -25,7 +28,7 @@ Inside your main bundle:
 
 ```js
 // main.js
-var PromiseWorker = require('promise-worker');
+var PromiseWorker = require('promise-worker-transferable');
 var worker = new Worker('worker.js');
 var promiseWorker = new PromiseWorker(worker);
 
@@ -36,7 +39,8 @@ promiseWorker.postMessage('ping').then(function (response) {
 });
 
 // With transferList
-promiseWorker.postMessage(pingImageData, [pingImageData.data]).then(function (response) {
+promiseWorker.postMessage(pingImageData, [pingImageData]) // pongImageData transferred from main to worker
+.then(function (response) {
   // handle response
 }).catch(function (error) {
   // handle error
@@ -47,7 +51,7 @@ Inside your `worker.js` bundle:
 
 ```js
 // worker.js
-var registerPromiseWorker = require('promise-worker/register');
+var registerPromiseWorker = require('promise-worker-transferable/register');
 
 registerPromiseWorker(function (message) {
   return 'pong';
@@ -55,24 +59,13 @@ registerPromiseWorker(function (message) {
 
 // With transferList
 registerPromiseWorker(function (message, withTransferList) {
-  return withTransferList(pongImageData, [pongImageData.data]);
+  return withTransferList(pongImageData, [pongImageData]); // pongImageData transferred from worker to main 
 });
 ```
 
 Note that you `require()` two separate APIs, so the library is split
 between the `worker.js` and main file. This keeps the total bundle size smaller.
 
-If you prefer `script` tags, you can get `PromiseWorker` via:
-
-```html
-<script src="https://unpkg.com/promise-worker/dist/promise-worker.js"></script>
-```
-
-And inside the worker, you can get `registerPromiseWorker` via:
-
-```js
-importScripts('https://unpkg.com/promise-worker/dist/promise-worker.register.js');
-```
 
 ### Message format
 
@@ -114,6 +107,23 @@ promiseWorker.postMessage(null).then(function (message) {
 });
 ```
 
+Promise can return withTransferList as well:
+
+```js
+// worker.js
+registerPromiseWorker(function (_, withTransferList) {
+  return Promise.resolve().then(function () {
+    return withTransferList(pongImageData, [pongImageData]); // pongImageData transferred to webworker
+  });
+});
+```
+
+```js
+// main.js
+promiseWorker.postMessage(null).then(function (message) {
+  // message contains pongImageData
+});
+```
 
 ### Error handling
 
@@ -209,9 +219,6 @@ self.addEventListener('activate', function(event) {
 Browser support
 ----
 
-See [.zuul.yml](https://github.com/nolanlawson/promise-worker/blob/master/.zuul.yml) for the full list
-of tested browsers, but basically:
-
 * Chrome
 * Firefox
 * Safari 8+
@@ -238,12 +245,13 @@ Create a new `PromiseWorker`, using the given worker.
 
 * `worker` - the `Worker` or [PseudoWorker](https://github.com/nolanlawson/pseudo-worker) to use.
 
-#### `PromiseWorker.postMessage(message)`
+#### `PromiseWorker.postMessage(message, optionalTransferList)`
 
 Send a message to the worker and return a Promise.
 
 * `message` - object - required
   * The message to send.
+* `optionalTransferList` - array of objects to transfer, just as in usual Worker.postMessage.
 * returns a Promise
 
 ### Worker bundle
@@ -254,7 +262,8 @@ and returns a Promise or value.
 #### `registerPromiseWorker(function)`
 
 * `function`
-  * Takes a message, returns a Promise or a value.
+  * Takes a message and withTransferList function, returns a Promise or a value.
+  Value can be wrapped with withTransferList. withTransferList gets value and transferList. 
 
 
 Testing the library
