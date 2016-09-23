@@ -66,4 +66,8 @@ PromiseWorker.prototype.postMessage = function (userMessage, transferList) {
   });
 };
 
+PromiseWorker.prototype.terminate = function () {
+    this._worker.terminate();
+}
+
 module.exports = PromiseWorker;
