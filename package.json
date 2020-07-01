@@ -65,6 +65,8 @@
   "files": [
     "index.js",
     "register.js",
+    "index.d.ts",
+    "register.d.ts",
     "dist"
   ]
 }
